@@ -24,13 +24,13 @@ var statsSection = document.querySelector("#stats-section")
 // Event Listeners
 window.addEventListener('load', setGame);
 
-for (var i = 0; i < inputs.length; i++) {
-  inputs[i].addEventListener('keyup', function() { moveToNextInput(event) });
-}
+inputs.forEach(input => {
+  input.addEventListener('keyup', function() { moveToNextInput(event) })
+})
 
-for (var i = 0; i < keyLetters.length; i++) {
-  keyLetters[i].addEventListener('click', function() { clickLetter(event) });
-}
+keyLetters.forEach(letter => {
+  letter.addEventListener('click', function() { clickLetter(event) })
+})
 
 guessButton.addEventListener('click', submitGuess);
 
@@ -92,12 +92,15 @@ function clickLetter(e) {
   var activeInput = null;
   var activeIndex = null;
 
-  for (var i = 0; i < inputs.length; i++) {
-    if(inputs[i].id.includes(`-${currentRow}-`) && !inputs[i].value && !activeInput) {
-      activeInput = inputs[i];
-      activeIndex = i;
+  inputs.forEach(input => {
+    if(input.id.includes(`-${currentRow}-`) && !input.value && !activeInput) {
+      activeInput = input;
+      activeIndex = parseInt(input.id.split("-")[2]);
     }
-  }
+  }) 
+
+
+  console.log(inputs[activeIndex + 1])
 
   activeInput.value = e.target.innerText;
   inputs[activeIndex + 1].focus();
@@ -134,31 +137,31 @@ function checkIsWord(data) {
 
 function compareGuess() {
   var guessLetters = guess.split('');
-
-  for (var i = 0; i < guessLetters.length; i++) {
-
-    if (winningWord.includes(guessLetters[i]) && winningWord.split('')[i] !== guessLetters[i]) {
-      updateBoxColor(i, 'wrong-location');
-      updateKeyColor(guessLetters[i], 'wrong-location-key');
-    } else if (winningWord.split('')[i] === guessLetters[i]) {
-      updateBoxColor(i, 'correct-location');
-      updateKeyColor(guessLetters[i], 'correct-location-key');
+ 
+  guessLetters.forEach((letter, index) => {
+    if (winningWord.includes(letter) && winningWord.split('')[index] !== guessLetters[index]) {
+      updateBoxColor(index, 'wrong-location');
+      updateKeyColor(letter, 'wrong-location-key');
+    } else if (winningWord.includes(letter) && winningWord.split('')[index] === guessLetters[index]) {
+      updateBoxColor(index, 'correct-location');
+      updateKeyColor(letter, 'correct-location-key');
     } else {
-      updateBoxColor(i, 'wrong');
-      updateKeyColor(guessLetters[i], 'wrong-key');
+      updateBoxColor(index, 'wrong');
+      updateKeyColor(letter, 'wrong-key');
     }
-  }
 
+  }) 
 }
 
 function updateBoxColor(letterLocation, className) {
   var row = [];
 
-  for (var i = 0; i < inputs.length; i++) {
-    if(inputs[i].id.includes(`-${currentRow}-`)) {
-      row.push(inputs[i]);
+  inputs.forEach((input) => {
+    if(input.id.includes(`-${currentRow}-`)) {
+      row.push(input);
     }
-  }
+  })
+
 
   row[letterLocation].classList.add(className);
 }
@@ -166,11 +169,11 @@ function updateBoxColor(letterLocation, className) {
 function updateKeyColor(letter, className) {
   var keyLetter = null;
 
-  for (var i = 0; i < keyLetters.length; i++) {
-    if (keyLetters[i].innerText === letter) {
-      keyLetter = keyLetters[i];
+  keyLetters.forEach((letter1) => {
+    if (letter1.innerText === letter) {
+      keyLetter = letter1;
     }
-  }
+  })
 
   keyLetter.classList.add(className);
 }
@@ -219,20 +222,20 @@ function startNewGame() {
 }
 
 function clearGameBoard() {
-  for (var i = 0; i < inputs.length; i++) {
-    inputs[i].value = '';
-    inputs[i].classList.remove('correct-location', 'wrong-location', 'wrong');
-  }
+
+  inputs.forEach((input) => {
+    input.value = '';
+    input.classList.remove('correct-location', 'wrong-location', 'wrong');
+  })
 }
 
 function clearKey() {
-  for (var i = 0; i < keyLetters.length; i++) {
-    keyLetters[i].classList.remove('correct-location-key', 'wrong-location-key', 'wrong-key');
-  }
+  keyLetters.forEach((letter) => {
+    letter.classList.remove('correct-location-key', 'wrong-location-key', 'wrong-key');
+  })
 }
 
 // Change Page View Functions
-
 function viewRules() {
   letterKey.classList.add('hidden');
   gameBoard.classList.add('collapsed');
